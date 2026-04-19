@@ -47,3 +47,45 @@ def generate_data(seed: int = 6412):
     sensor_b = rng.normal(loc=27.0, scale=4.5, size=n)
 
     return sensor_a, sensor_b, timestamps
+
+def plot_scatter(sensor_a: np.ndarray, sensor_b: np.ndarray, timestamps: np.ndarray, ax):
+    """Draw a scatter plot of two sensors on the provided Axes.
+
+    Parameters
+    ----------
+    sensor_a : numpy.ndarray
+        1-D array of shape (N,) containing Sensor A temperature readings in °C.
+    sensor_b : numpy.ndarray
+        1-D array of shape (N,) containing Sensor B temperature readings in °C.
+    timestamps : numpy.ndarray
+        1-D array of shape (N,) containing timestamps in seconds.
+    ax : matplotlib.axes.Axes
+        Matplotlib Axes object to draw the scatter plot on. The function
+        modifies this Axes in place.
+
+    Returns
+    -------
+    None
+        The function modifies the provided Axes object in place and does not
+        return a value.
+
+    Notes
+    -----
+    - Sensor A points are plotted in blue and Sensor B points in orange.
+    - Axis labels, title, legend, grid, and tight layout are set on the Axes.
+    """
+    # Plot points for each sensor
+    ax.scatter(timestamps, sensor_a, s=30, c='tab:blue', alpha=0.8, label='Sensor A')
+    ax.scatter(timestamps, sensor_b, s=30, c='tab:orange', alpha=0.8, label='Sensor B')
+
+    # Labels and title
+    ax.set_xlabel('Time (s)')
+    ax.set_ylabel('Temperature (°C)')
+    ax.set_title('Sensor temperature readings vs Time')
+
+    # Legend and grid
+    ax.legend()
+    ax.grid(True, which='both', axis='both', linestyle='-', alpha=0.3)
+
+    # No return; modifies ax in place
+    return None
