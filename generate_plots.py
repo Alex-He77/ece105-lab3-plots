@@ -89,3 +89,104 @@ def plot_scatter(sensor_a: np.ndarray, sensor_b: np.ndarray, timestamps: np.ndar
 
     # No return; modifies ax in place
     return None
+
+def plot_histogram(sensor_a: np.ndarray, sensor_b: np.ndarray, ax, bins=30):
+    """Draw overlaid histograms for two sensors on the provided Axes.
+
+    Parameters
+    ----------
+    sensor_a : numpy.ndarray
+        1-D array of shape (N,) containing Sensor A temperature readings in °C.
+    sensor_b : numpy.ndarray
+        1-D array of shape (N,) containing Sensor B temperature readings in °C.
+    ax : matplotlib.axes.Axes
+        Matplotlib Axes object to draw the histograms on. Modified in place.
+    bins : int or sequence, optional
+        Number of bins (int) or bin edges (sequence). If int, a shared range
+        across both sensors is used. Default is 30.
+
+    Returns
+    -------
+    None
+        The function modifies the provided Axes object in place and returns None.
+    """
+    # Determine shared bin edges if bins is an int
+    if isinstance(bins, int):
+        lo = min(np.min(sensor_a), np.min(sensor_b))
+        hi = max(np.max(sensor_a), np.max(sensor_b))
+        bin_edges = np.linspace(lo, hi, bins + 1)
+    else:
+        bin_edges = bins
+
+    # Plot histograms
+    ax.hist(sensor_a, bins=bin_edges, color='tab:blue', alpha=0.5, label='Sensor A',
+            edgecolor='black', linewidth=0.2)
+    ax.hist(sensor_b, bins=bin_edges, color='tab:orange', alpha=0.5, label='Sensor B',
+            edgecolor='black', linewidth=0.2)
+
+    # Vertical dashed lines at each sensor mean
+    mean_a = np.mean(sensor_a)
+    mean_b = np.mean(sensor_b)
+    ax.axvline(mean_a, color='tab:blue', linestyle='--', linewidth=2, label='Mean A')
+    ax.axvline(mean_b, color='tab:orange', linestyle='--', linewidth=2, label='Mean B')
+
+    # Labels, title, legend, and grid
+    ax.set_xlabel('Temperature (°C)')
+    ax.set_ylabel('Count')
+    ax.set_title('Histogram of sensor temperature readings')
+    ax.legend()
+    ax.grid(axis='y', alpha=0.3)
+
+    return None
+
+def plot_boxplot(sensor_a: np.ndarray, sensor_b: np.ndarray, ax):
+    """Draw side-by-side box plots for two sensors on the provided Axes.
+
+    Parameters
+    ----------
+    sensor_a : numpy.ndarray
+        1-D array of shape (N,) containing Sensor A temperature readings in °C.
+    sensor_b : numpy.ndarray
+        1-D array of shape (N,) containing Sensor B temperature readings in °C.
+    ax : matplotlib.axes.Axes
+        Matplotlib Axes object to draw the box plots on. Modified in place.
+
+    Returns
+    -------
+    None
+        The function modifies the provided Axes object in place and returns None.
+
+    Notes
+    -----
+    - Boxes are colored to match the scatter/histogram colors used elsewhere.
+    - A horizontal dashed line is drawn at the overall mean across both sensors.
+    """
+   
+    # Prepare data
+    data = [sensor_a, sensor_b]
+    labels = ['Sensor A', 'Sensor B']
+
+    # Create boxplot with notches and colored boxes
+    bp = ax.boxplot(data, labels=labels, patch_artist=True, notch=True,
+                    flierprops=dict(marker='o', markerfacecolor='gray', markersize=5, alpha=0.6))
+
+    # Color the boxes
+    colors = ['tab:blue', 'tab:orange']
+    for patch, color in zip(bp['boxes'], colors):
+        patch.set_facecolor(color)
+        patch.set_alpha(0.6)
+
+    # Plot mean markers
+    means = [np.mean(d) for d in data]
+    ax.scatter([1, 2], means, color=colors, marker='D', edgecolor='black', zorder=3, label='Mean')
+
+    # horizontal dashed line at overall mean across both sensors
+    overall_mean = np.mean(np.concatenate(data))
+    ax.axhline(overall_mean, color='gray', linestyle='--', linewidth=1.5, label='Overall mean')
+
+    ax.set_ylabel('Temperature (°C)')
+    ax.set_title('Box plot of sensor temperature readings')
+    ax.legend()
+    ax.grid(axis='y', alpha=0.3)
+
+    return None
