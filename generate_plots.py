@@ -190,3 +190,43 @@ def plot_boxplot(sensor_a: np.ndarray, sensor_b: np.ndarray, ax):
     ax.grid(axis='y', alpha=0.3)
 
     return None
+
+def main(seed: int = 6412):
+    """Generate data, create plots, and save a combined figure.
+
+    Parameters
+    ----------
+    seed : int
+        Seed passed to generate_data for reproducible random data. Defaults to
+        6412.
+
+    Returns
+    -------
+    None
+        Saves a PNG file named 'sensor_analysis.png' and does not return a value.
+    """
+    import matplotlib.pyplot as plt
+
+    # Generate data
+    sensor_a, sensor_b, timestamps = generate_data(seed)
+
+    # Create a 1x3 subplot figure
+    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+
+    # Scatter plot (left)
+    plot_scatter(sensor_a, sensor_b, timestamps, axes[0])
+
+    # Histogram (middle)
+    plot_histogram(sensor_a, sensor_b, axes[1], bins=30)
+
+    # Box plot (right)
+    plot_boxplot(sensor_a, sensor_b, axes[2])
+
+    # Adjust layout and save
+    plt.tight_layout()
+    fig.savefig('sensor_analysis.png', dpi=150, bbox_inches='tight')
+    print("Saved 'sensor_analysis.png'")
+
+
+if __name__ == '__main__':
+    main()
