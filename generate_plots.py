@@ -210,17 +210,21 @@ def main(seed: int = 6412):
     # Generate data
     sensor_a, sensor_b, timestamps = generate_data(seed)
 
-    # Create a 1x3 subplot figure
-    fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+    # Create a 2x2 subplot figure (use 3 panels; leave the 4th blank)
+    fig, axes = plt.subplots(2, 2, figsize=(10, 8))
+    axes_flat = axes.ravel()
 
-    # Scatter plot (left)
-    plot_scatter(sensor_a, sensor_b, timestamps, axes[0])
+    # Scatter plot (top-left)
+    plot_scatter(sensor_a, sensor_b, timestamps, axes_flat[0])
 
-    # Histogram (middle)
-    plot_histogram(sensor_a, sensor_b, axes[1], bins=30)
+    # Histogram (top-right)
+    plot_histogram(sensor_a, sensor_b, axes_flat[1], bins=30)
 
-    # Box plot (right)
-    plot_boxplot(sensor_a, sensor_b, axes[2])
+    # Box plot (bottom-left)
+    plot_boxplot(sensor_a, sensor_b, axes_flat[2])
+
+    # Hide the unused axis (bottom-right)
+    axes_flat[3].axis('off')
 
     # Adjust layout and save
     plt.tight_layout()
